@@ -1,0 +1,10 @@
+{
+  "name": "Messi — Unofficial",
+  "short_name": "Messi",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08111f",
+  "theme_color": "#111827",
+  "lang": "ar",
+  "dir": "rtl"
+}

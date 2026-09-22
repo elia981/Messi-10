@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Messi — Unofficial</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  
+  <style>
+    :root{
+      --panel:rgba(7,19,36,.74);
+      --card:rgba(11,27,49,.74);
+      --text:#f7fbff;
+      --muted:#d8e5f2;
+      --accent:#7dd3fc;
+      --line:rgba(255,255,255,.18);
+    }
+    *{box-sizing:border-box}
+    html,body{min-height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      position:relative;
+      overflow-x:hidden;
+      background-color:#8edcff;
+      background-image:
+        linear-gradient(rgba(4,16,30,.20), rgba(4,16,30,.28)),
+        repeating-linear-gradient(
+          90deg,
+          #89daf7 0px,
+          #89daf7 68px,
+          #f8fcff 68px,
+          #f8fcff 136px
+        );
+      background-size:cover;
+      background-attachment:fixed;
+    }
+    body::before{
+      content:"10";
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:min(56vw, 360px);
+      font-weight:900;
+      color:rgba(255,255,255,.22);
+      text-shadow:0 10px 40px rgba(0,0,0,.18);
+      letter-spacing:-10px;
+      pointer-events:none;
+      z-index:0;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), transparent 34%);
+    }
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:720px;
+      margin:auto;
+      padding:20px 14px 132px;
+    }
+    .hero{
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      gap:12px;
+      padding:8px 2px 18px
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .avatar{
+      width:58px;height:58px;border-radius:18px;
+      background:linear-gradient(135deg,#ffffff,#8ed9f8);
+      border:1px solid rgba(255,255,255,.55);
+      display:grid;place-items:center;
+      font-size:28px;font-weight:900;color:#0b1220;
+      box-shadow:0 8px 22px rgba(0,0,0,.18)
+    }
+    h1{font-size:23px;margin:0}
+    .sub{color:var(--muted);font-size:13px;margin-top:3px}
+    .trial-badge{
+      display:none;
+      margin-top:7px;
+      font-size:12px;
+      line-height:1.4;
+      color:#08243a;
+      background:rgba(255,255,255,.88);
+      padding:7px 10px;
+      border-radius:12px;
+      width:max-content;
+      max-width:100%
+    }
+    .live{
+      width:100%;
+      font-size:12px;
+      line-height:1.55;
+      padding:9px 12px;
+      border-radius:14px;
+      text-align:center;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      background:rgba(16,51,38,.82);
+      color:#d7ffee;
+      border:1px solid rgba(255,255,255,.18)
+    }
+    .grid{scroll-margin-top:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .stat{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      backdrop-filter:blur(8px)
+    }
+    .stat .n{font-size:30px;font-weight:800;letter-spacing:-1px}
+    .stat .l{color:var(--muted);font-size:13px;margin-top:4px}
+    .wide{grid-column:1/-1}
+    .tab-page{display:none}.tab-page.active-page{display:block}
+.section{scroll-margin-top:18px;
+      margin-top:16px;background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:20px;padding:16px;
+      backdrop-filter:blur(10px)
+    }
+    .section h2{font-size:16px;margin:0 0 12px}
+    .match{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+    .match:first-of-type{border-top:0}
+    .teams{font-weight:700}
+    .meta{font-size:12px;color:var(--muted);margin-top:4px}
+    button{appearance:none;border:0;border-radius:14px;padding:13px 16px;font-size:15px;font-weight:750;cursor:pointer}
+    .primary{width:100%;margin-top:16px;background:var(--accent);color:#062235}
+    .primary:disabled{opacity:.6;cursor:wait}
+    .notice{
+      font-size:12px;
+      line-height:1.7;
+      color:var(--muted);
+      margin-top:12px;
+      padding:11px 12px;
+      border-radius:14px;
+      background:rgba(7,19,36,.58);
+      border:1px solid var(--line);
+      backdrop-filter:blur(8px)
+    }
+    .err{display:none;background:#35171b;border:1px solid #6b2932;color:#fecaca;border-radius:14px;padding:12px;margin-top:12px;font-size:13px;line-height:1.6}
+    .foot{
+      position:fixed;left:0;right:0;bottom:0;
+      background:rgba(8,17,31,.72);
+      backdrop-filter:blur(14px);
+      border-top:1px solid var(--line);
+      z-index:2
+    }
+    .footin{max-width:720px;margin:auto;display:flex;justify-content:space-around;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+    .tab{
+      background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;
+      font-size:12px;text-align:center;min-width:92px;padding:8px 12px
+    }
+    .tab b{display:block;font-size:20px;margin-bottom:2px}
+    .active{color:var(--accent)}
+    @media(min-width:560px){.grid{scroll-margin-top:18px;grid-template-columns:repeat(4,1fr)}}
+  
+    .lock-screen{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(4,12,24,.88);backdrop-filter:blur(12px)}
+    .lock-card{width:min(100%,440px);background:rgba(10,25,45,.97);border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+    .lock-card h2{margin:0 0 6px;font-size:24px}.lock-card p{margin:0 0 16px;color:var(--muted);line-height:1.6;font-size:14px}
+    .price{display:flex;align-items:end;gap:7px;margin:14px 0 18px}.price strong{font-size:42px;line-height:1}.price span{color:var(--muted);font-size:13px;padding-bottom:4px}
+    .activation-input{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:14px 15px;font-size:17px;text-align:center;letter-spacing:1px;outline:none}
+    .activation-input:focus{border-color:var(--accent)}.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.row button{flex:1;min-width:150px}
+    .secondary{background:rgba(255,255,255,.10);color:#fff;border:1px solid var(--line)}
+    .success-box{display:none;margin-top:12px;padding:12px;border-radius:14px;background:rgba(6,78,59,.55);border:1px solid rgba(167,243,208,.35);color:#d1fae5;font-size:13px;line-height:1.6}
+    .lock-error{display:none;margin-top:12px;padding:12px;border-radius:14px;background:rgba(91,20,28,.65);border:1px solid rgba(252,165,165,.35);color:#fecaca;font-size:13px;line-height:1.6}
+    .tiny{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}.hidden{display:none!important}
+
+  </style>
+
+</head>
+<body>
+
+<div id="lockScreen" class="lock-screen">
+  <div class="lock-card">
+    <div style="font-size:34px;margin-bottom:8px">⚽</div>
+    <h2>تفعيل Messi</h2>
+    <p>بعد انتهاء التجربة المجانية لمدة يومين، ادفع مرة واحدة فقط لتحصل على كود تفعيل دائم. لا تحتاج إلى حساب أو كلمة مرور. الدفع يتم عبر Mollie، ويمكن أن تظهر لك وسائل مثل iDEAL والبطاقات بحسب ما هو مفعّل في حساب التاجر.</p>
+    <div class="price"><strong>€5</strong><span>دفعة واحدة • ترخيص دائم</span></div>
+    <button id="buyBtn" class="primary" type="button">الدفع بـ 5€ عبر Mollie</button>
+    <div style="height:14px"></div>
+    <input id="licenseCode" class="activation-input" inputmode="text" autocomplete="off" maxlength="24" placeholder="MESSI-XXXX-XXXX" aria-label="كود التفعيل">
+    <div class="row"><button id="activateBtn" class="secondary" type="button">تفعيل الكود</button></div>
+    <div id="licenseSuccess" class="success-box"></div>
+    <div id="licenseError" class="lock-error"></div>
+    <div class="tiny">الكود يرتبط بأول تثبيت يستخدمه. إذا تغيّر الهاتف أو حُذفت بيانات التطبيق، يحتاج الكود إلى إعادة ضبط من الإدارة.</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="brand">
+      <div class="avatar">10</div>
+      <div>
+        <h1>Messi</h1>
+        <div class="sub">Lionel Messi • تطبيق جماهيري غير رسمي</div>
+        <div id="trialBadge" class="trial-badge">تجربة مجانية</div>
+      </div>
+    </div>
+    <div id="status" class="live">جارٍ التحميل…</div>
+  </div>
+
+  <div id="statsPage" class="tab-page active-page">
+  <div class="grid" id="statsSection">
+    <div class="stat"><div id="goals" class="n">—</div><div class="l">⚽ أهداف 2026</div></div>
+    <div class="stat"><div id="assists" class="n">—</div><div class="l">🎯 أسيستات 2026</div></div>
+    <div class="stat"><div id="apps" class="n">—</div><div class="l">🏟️ مباريات 2026</div></div>
+    <div class="stat"><div id="contrib" class="n">—</div><div class="l">✨ المساهمات</div></div>
+  </div>
+
+  <div class="section" id="seasonSection">
+    <h2>إحصائيات إنتر ميامي 2026</h2>
+    <div id="seasonLine" class="sub">سيتم اختيار أحدث موسم متاح من المصدر.</div>
+  </div>
+
+  </div>
+
+  <div id="matchesPage" class="tab-page">
+  <div id="livePanel" class="section" style="display:none">
+    <h2>🔴 المباراة المباشرة</h2>
+    <div id="liveLine" class="sub">—</div>
+  </div>
+
+  <div class="section" id="matchesSection">
+    <h2>آخر مباراة</h2>
+    <div id="lastMatch" class="match"><div><div class="teams">—</div><div class="meta">—</div></div><div>—</div></div>
+  </div>
+
+  <div class="section" id="nextMatchSection">
+    <h2>المباراة القادمة</h2>
+    <div id="nextMatch" class="match"><div><div class="teams">—</div><div class="meta">—</div></div><div>—</div></div>
+  </div>
+
+  </div>
+
+  <div id="careerPage" class="tab-page">
+    <div class="section">
+      <h2>🏆 مسيرة ليونيل ميسي</h2><div class="sub" style="margin-bottom:12px">إجمالي المسيرة حتى آخر تحديث موثّق</div>
+      <div class="grid">
+        <div class="stat"><div id="careerGoals" class="n">—</div><div class="l">⚽ أهداف المسيرة</div></div>
+        <div class="stat"><div id="careerAssists" class="n">—</div><div class="l">🎯 أسيستات المسيرة</div></div>
+        <div class="stat"><div id="careerGames" class="n">—</div><div class="l">🏟️ مباريات المسيرة</div></div>
+        <div class="stat"><div id="careerTrophies" class="n">—</div><div class="l">🏆 البطولات</div></div>
+      </div>
+      <div id="careerNote" class="sub" style="margin-top:12px">
+        المصدر: MessiStats للأهداف والمباريات والأسيستات، وMLS الرسمي لعدد البطولات وآخر مباراة.
+      </div>
+    </div>
+  </div>
+
+  <button id="refresh" class="primary">تحديث الإحصائيات الآن</button>
+  <div id="err" class="err"></div>
+  <div class="notice" id="sourceNotice">
+    يتم التحقق من الإحصائيات عبر الخادم. أثناء المباراة، يعاد الفحص تلقائيًا كل 15 ثانية عند تفعيل مزود البيانات الحي.
+  </div>
+</div>
+
+<div class="foot">
+  <div class="footin">
+    <button class="tab active" type="button" data-page="statsPage"><b>📊</b>الإحصائيات</button>
+    <button class="tab" type="button" data-page="matchesPage"><b>⚽</b>المباريات</button>
+    <button class="tab" type="button" data-page="careerPage"><b>🏆</b>المسيرة</button>
+  </div>
+</div>
+
+<script>
+
+const LICENSE={tokenKey:'messi_license_token_v1',deviceKey:'messi_device_id_v1',verifiedKey:'messi_license_verified_at_v1',trialExpiryKey:'messi_trial_expires_at_v1',offlineGraceMs:72*60*60*1000};
+function getDeviceId(){let id=localStorage.getItem(LICENSE.deviceKey);if(!id){id=crypto.randomUUID?crypto.randomUUID():'dev-'+Date.now()+'-'+Math.random().toString(36).slice(2);localStorage.setItem(LICENSE.deviceKey,id)}return id}
+function showLicenseError(msg){const e=document.getElementById('licenseError');e.textContent=msg;e.style.display='block';document.getElementById('licenseSuccess').style.display='none'}
+function showLicenseSuccess(msg){const e=document.getElementById('licenseSuccess');e.textContent=msg;e.style.display='block';document.getElementById('licenseError').style.display='none'}
+function unlockApp(){document.getElementById('lockScreen').classList.add('hidden')}
+const FUNCTIONS_BASE='https://yqdbhtspxgrbtwiyuszv.supabase.co/functions/v1';
+const FUNCTION_MAP={
+  '/api/create-checkout':'create-checkout',
+  '/api/claim-license':'claim-license',
+  '/api/activate':'activate-license',
+  '/api/verify':'verify-license',
+  '/api/trial':'trial-status'
+};
+async function apiPost(path,body){
+  const fn=FUNCTION_MAP[path]||path;
+  const url=fn.startsWith('http')?fn:`${FUNCTIONS_BASE}/${fn}`;
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body||{})});
+  let d={};try{d=await r.json()}catch{}
+  if(!r.ok)throw new Error(d.error||'تعذر الاتصال بخادم التفعيل.');
+  return d
+}
+async function verifySavedLicense(){const token=localStorage.getItem(LICENSE.tokenKey);if(!token)return false;try{const d=await apiPost('/api/verify',{token,deviceId:getDeviceId()});if(d.valid){localStorage.setItem(LICENSE.verifiedKey,String(Date.now()));unlockApp();return true}localStorage.removeItem(LICENSE.tokenKey)}catch(e){const last=Number(localStorage.getItem(LICENSE.verifiedKey)||0);if(last&&Date.now()-last<LICENSE.offlineGraceMs){unlockApp();return true}}return false}
+function formatRemaining(seconds){
+  const s=Math.max(0,Number(seconds)||0);
+  const days=Math.floor(s/86400);
+  const hours=Math.floor((s%86400)/3600);
+  const mins=Math.floor((s%3600)/60);
+  if(days>0) return `${days} يوم و${hours} ساعة`;
+  if(hours>0) return `${hours} ساعة و${mins} دقيقة`;
+  return `${Math.max(1,mins)} دقيقة`;
+}
+function showTrialBadge(expiresAt){
+  const badge=document.getElementById('trialBadge');
+  if(!badge) return;
+  const tick=()=>{
+    const remaining=Math.max(0,Math.floor((new Date(expiresAt).getTime()-Date.now())/1000));
+    if(remaining<=0){
+      badge.style.display='none';
+      document.getElementById('lockScreen').classList.remove('hidden');
+      const title=document.querySelector('#lockScreen h2');
+      const text=document.querySelector('#lockScreen p');
+      if(title) title.textContent='انتهت التجربة المجانية';
+      if(text) text.textContent='انتهت مدة اليومين. يمكنك شراء التطبيق بـ5€ مرة واحدة أو إدخال كود تفعيل.';
+      return;
+    }
+    badge.textContent=`🎁 التجربة المجانية: متبقي ${formatRemaining(remaining)}`;
+    badge.style.display='block';
+  };
+  tick();
+  setInterval(tick,60000);
+}
+async function verifyTrialAccess(){
+  try{
+    const d=await apiPost('/api/trial',{deviceId:getDeviceId()});
+    if(d.expiresAt) localStorage.setItem(LICENSE.trialExpiryKey,d.expiresAt);
+    if(d.active){
+      showTrialBadge(d.expiresAt);
+      unlockApp();
+      return true;
+    }
+    const title=document.querySelector('#lockScreen h2');
+    const text=document.querySelector('#lockScreen p');
+    if(title) title.textContent='انتهت التجربة المجانية';
+    if(text) text.textContent='انتهت مدة اليومين. يمكنك شراء التطبيق بـ5€ مرة واحدة أو إدخال كود تفعيل.';
+    return false;
+  }catch(e){
+    const cached=localStorage.getItem(LICENSE.trialExpiryKey);
+    if(cached && new Date(cached).getTime()>Date.now()){
+      showTrialBadge(cached);
+      unlockApp();
+      return true;
+    }
+    showLicenseError('تعذر التحقق من التجربة المجانية الآن. اتصل بالإنترنت وحاول مجددًا.');
+    return false;
+  }
+}
+
+async function startCheckout(){const b=document.getElementById('buyBtn');b.disabled=true;b.textContent='جارٍ فتح صفحة الدفع…';try{const nativeAndroid=!!(window.AndroidBridge&&typeof window.AndroidBridge.openExternal==='function');const returnUrl=nativeAndroid?'messifan://payment-return':location.origin+location.pathname;const d=await apiPost('/api/create-checkout',{returnUrl});if(!d.url)throw new Error('لم يصل رابط الدفع.');if(nativeAndroid){window.AndroidBridge.openExternal(d.url)}else{location.href=d.url}}catch(e){showLicenseError(e.message);b.disabled=false;b.textContent='الدفع بـ 5€ عبر Mollie'}}
+async function activateCode(){const b=document.getElementById('activateBtn'),code=document.getElementById('licenseCode').value.trim().toUpperCase();if(!code){showLicenseError('أدخل كود التفعيل أولًا.');return}b.disabled=true;b.textContent='جارٍ التفعيل…';try{const d=await apiPost('/api/activate',{code,deviceId:getDeviceId()});localStorage.setItem(LICENSE.tokenKey,d.token);localStorage.setItem(LICENSE.verifiedKey,String(Date.now()));showLicenseSuccess('تم التفعيل بنجاح ✅');setTimeout(unlockApp,650)}catch(e){showLicenseError(e.message)}finally{b.disabled=false;b.textContent='تفعيل الكود'}}
+async function claimAfterPayment(){const q=new URLSearchParams(location.search),orderRef=q.get('order_ref');if(q.get('checkout')!=='success'||!orderRef)return;try{showLicenseSuccess('تم الدفع. جارٍ التحقق عبر Mollie وإنشاء كود التفعيل…');const d=await apiPost('/api/claim-license',{orderRef});document.getElementById('licenseCode').value=d.code||'';showLicenseSuccess('تم الدفع بنجاح ✅ كودك جاهز. اضغط «تفعيل الكود».');history.replaceState({},'',location.pathname)}catch(e){showLicenseError(e.message)}}
+document.getElementById('buyBtn').addEventListener('click',startCheckout);
+document.getElementById('activateBtn').addEventListener('click',activateCode);
+document.getElementById('licenseCode').addEventListener('keydown',e=>{if(e.key==='Enter')activateCode()});
+(async()=>{
+  const q=new URLSearchParams(location.search);
+  if(q.get('checkout')==='success'){
+    await claimAfterPayment();
+    return;
+  }
+  const paid=await verifySavedLicense();
+  if(paid){
+    const badge=document.getElementById('trialBadge');
+    if(badge) badge.style.display='none';
+    return;
+  }
+  await verifyTrialAccess();
+})();
+
+const API='https://www.thesportsdb.com/api/v1/json/123';
+const $=id=>document.getElementById(id);
+const txt=(id,v)=>$(id).textContent=(v===null||v===undefined||v==='')?'—':v;
+const num=(o,keys)=>{for(const k of keys){if(o&&o[k]!==undefined&&o[k]!==null&&o[k]!=='')return o[k]}return null};
+const pickArray=(obj)=>{if(!obj)return[]; for(const k of Object.keys(obj)){if(Array.isArray(obj[k])) return obj[k]||[]} return []};
+const asDate=v=>{if(!v)return 0; const d=new Date(v); return isNaN(d)?0:d.getTime()};
+function fmtDate(v){ if(!v)return '—'; const d=new Date(v); return isNaN(d)?v:new Intl.DateTimeFormat('ar-NL',{dateStyle:'medium',timeStyle:'short'}).format(d)}
+function matchMeta(e){
+  const parts=[];
+  if(e.localLabel) parts.push(e.localLabel);
+  else if(e.dateLabel) parts.push(e.dateLabel);
+  else if(e.date) parts.push(fmtDate(e.date));
+  if(e.status==='FT') parts.push('انتهت');
+  else if(e.status==='NS') parts.push('قادمة');
+  if(e.league) parts.push(e.league);
+  return parts.join(' • ');
+}
+function showMatch(el,e,kind='match'){
+  if(!e){
+    el.innerHTML=`<div><div class="teams">${kind==='next'?'سيتم التحديث عند توفر الموعد الرسمي':'لا توجد بيانات'}</div><div class="meta">—</div></div><div>—</div>`;
+    return;
+  }
+  const label=e.name||e.label||e.strEvent||
+    [e.strHomeTeam,e.strAwayTeam].filter(Boolean).join(' × ')||'—';
+
+  const meta=[];
+  if(e.localLabel){
+    meta.push(e.localLabel);
+  }else if(e.dateLabel){
+    meta.push(e.dateLabel);
+  }else if(e.date){
+    const d=new Date(e.date);
+    if(!isNaN(d)){
+      meta.push(new Intl.DateTimeFormat('ar-NL',{
+        timeZone:'Europe/Amsterdam',
+        day:'2-digit',month:'2-digit',year:'numeric',
+        hour:'2-digit',minute:'2-digit'
+      }).format(d));
+    }
+  }
+  if(e.status==='FT') meta.push('انتهت المباراة');
+  else if(e.status==='NS') meta.push('قادمة');
+  else if(e.status) meta.push(e.status);
+  if(e.league) meta.push(e.league);
+
+  const side=e.score||(e.goals!=null?`⚽ ${e.goals}${e.assists!=null?` • 🎯 ${e.assists}`:''}`:'');
+  el.innerHTML=`<div><div class="teams">${label}</div><div class="meta">${meta.join(' • ')||'—'}</div></div><div>${side||'—'}</div>`;
+}
+async function getJSON(url){
+  const r=await fetch(url,{headers:{'Accept':'application/json'}});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
+let autoRefreshTimer=null;
+
+function scheduleAutoRefresh(isLive){
+  if(autoRefreshTimer) clearTimeout(autoRefreshTimer);
+  const ms=isLive ? 15000 : 300000;
+  autoRefreshTimer=setTimeout(()=>load(true),ms);
+}
+
+async function load(silent=false){
+  if(!silent){
+    $('refresh').disabled=true;
+    $('status').textContent='جارٍ التحقق…';
+  }
+  $('err').style.display='none';
+  try{
+    const r=await fetch(`${FUNCTIONS_BASE}/messi-stats?ts=${Date.now()}`,{
+      method:'GET',
+      headers:{'Accept':'application/json'},
+      cache:'no-store'
+    });
+    const data=await r.json();
+
+    const year=data.currentYear||null;
+    const club=data.interMiamiSeason||year||null;
+    const career=data.career||null;
+    if(!year) throw new Error(data.error||'تعذر الوصول إلى الإحصائيات.');
+
+    txt('goals',year.goals);
+    txt('assists',year.assists);
+    txt('apps',year.games);
+    txt('contrib',year.contributions ?? ((Number(year.goals)||0)+(Number(year.assists)||0)));
+
+    if(career){
+      txt('careerGoals',career.goals);
+      txt('careerAssists',career.assists);
+      txt('careerGames',career.games);
+      txt('careerTrophies',career.trophies);
+      const note=$('careerNote');
+      if(note){
+        const v=career.verifiedAt ? ` • تحديث ${career.verifiedAt}` : '';
+        note.textContent=`المصدر: MessiStats + MLS الرسمي${v}`;
+      }
+    }else{
+      txt('careerGoals',null);
+      txt('careerAssists',null);
+      txt('careerGames',null);
+      txt('careerTrophies',null);
+    }
+
+    if(club){
+      $('seasonLine').textContent=
+        `الدوري الأمريكي MLS 2026 • ${club.games??'—'} مباراة • ${club.goals??'—'} هدف • ${club.assists??'—'} أسيست • ${(club.contributions ?? ((Number(club.goals)||0)+(Number(club.assists)||0)))} مساهمة`;
+    }
+
+    const livePanel=$('livePanel');
+    if(data.liveMatch){
+      livePanel.style.display='block';
+      const lm=data.liveMatch;
+      const ps=lm.player||{};
+      $('liveLine').textContent=
+        `${lm.name||'مباراة إنتر ميامي'} • ${lm.score||'—'}${lm.elapsed!=null?` • الدقيقة ${lm.elapsed}`:''}`+
+        `${ps.goals!=null?` • ميسي: ${ps.goals} هدف`:''}`+
+        `${ps.assists!=null?` • ${ps.assists} أسيست`:''}`;
+    }else{
+      livePanel.style.display='none';
+    }
+
+    showMatch($('lastMatch'),data.lastMatch||null,'last');
+    showMatch($('nextMatch'),data.nextMatch||null,'next');
+
+    const t=data.fetchedAt?new Date(data.fetchedAt):null;
+    const tm=t&&!isNaN(t)
+      ? new Intl.DateTimeFormat('ar-NL',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(t)
+      : '';
+
+    if(data.mode==='api-football-live'){
+      $('status').textContent=data.live ? `🔴 مباشر • تحقق ${tm}` : `● متصل • تحقق ${tm}`;
+      $('sourceNotice').textContent=
+        data.live
+          ? 'تحديث حي عبر API-Football. يعاد الفحص تلقائيًا كل 15 ثانية أثناء المباراة.'
+          : 'متصل بـ API-Football. خارج وقت المباراة يعاد التحقق دوريًا، وأثناء المباراة كل 15 ثانية.';
+    }else{
+      $('status').textContent=`✓ آخر رقم رسمي موثّق${tm?` • تحقق ${tm}`:''}`;
+      $('sourceNotice').textContent=
+        'الأرقام المعروضة هي آخر أرقام MLS الرسمية التي تم التحقق منها. عند تفعيل مصدر البيانات الحي سيُحدّث التطبيق تلقائيًا أثناء المباريات.';
+    }
+
+    if(data.error){
+      $('err').style.display='block';
+      $('err').textContent=data.error;
+    }else if(data.needsApiKey){
+      $('err').style.display='none';
+      $('sourceNotice').textContent += ' • التحديث الحي أثناء المباراة سيعمل بعد تفعيل مزود البيانات الحي.';
+    }
+
+    scheduleAutoRefresh(Boolean(data.live));
+  }catch(e){
+    $('status').textContent='تعذر التحقق';
+    $('err').style.display='block';
+    $('err').textContent='تعذر تحديث إحصائيات ميسي الآن: '+e.message;
+    scheduleAutoRefresh(false);
+  }finally{
+    $('refresh').disabled=false;
+  }
+}
+$('refresh').addEventListener('click',load);
+function openTab(pageId, btn){
+  document.querySelectorAll('.tab-page').forEach(page=>{
+    page.classList.toggle('active-page', page.id===pageId);
+  });
+  document.querySelectorAll('.tab[data-page]').forEach(x=>x.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab[data-page]').forEach(btn=>{
+  btn.addEventListener('click',()=>openTab(btn.dataset.page,btn));
+});
+window.messiHandleBack=()=>{
+  const active=document.querySelector('.tab-page.active-page');
+  if(active && active.id!=='statsPage'){
+    openTab('statsPage',document.querySelector('.tab[data-page="statsPage"]'));
+    return true;
+  }
+  return false;
+};
+openTab('statsPage', document.querySelector('.tab[data-page="statsPage"]'));
+load();
+if(!window.AndroidBridge && 'serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
