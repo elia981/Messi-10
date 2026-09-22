@@ -1,4 +1,4 @@
-name: Build Messi Android from ZIP
+name: Build Messi Android APK
 
 on:
   workflow_dispatch:
@@ -17,39 +17,35 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android API 36
-        run: sdkmanager "platforms;android-36"
-
-      - name: Set up Gradle 8.13
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.13'
-
       - name: Unzip project
         run: |
+          rm -rf src
           mkdir -p src
-          unzip -q messi-android-studio-v2.zip -d src
-          test -f src/messi-android-studio/settings.gradle
+          unzip -q messi-android-studio-v2-1.zip -d src
+          find src -maxdepth 3 -type f | head -50
 
-      - name: Build debug APK
-        working-directory: src/messi-android-studio
-        run: gradle :app:assembleDebug
+      - name: Make Gradle executable
+        run: |
+          GRADLEW=$(find src -name gradlew -type f | head -1)
+          if [ -n "$GRADLEW" ]; then
+            chmod +x "$GRADLEW"
+          fi
 
-      - name: Build release AAB
-        working-directory: src/messi-android-studio
-        run: gradle :app:bundleRelease
+      - name: Build Debug APK
+        run: |
+          GRADLEW=$(find src -name gradlew -type f | head -1)
+          if [ -z "$GRADLEW" ]; then
+            echo "gradlew was not found"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$GRADLEW")
+          cd "$PROJECT_DIR"
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: messi-debug-apk
-          path: src/messi-android-studio/app/build/outputs/apk/debug/*.apk
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: messi-release-aab
-          path: src/messi-android-studio/app/build/outputs/bundle/release/*.aab
+          name: Messi-10-APK
+          path: |
+            src/**/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
