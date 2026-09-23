@@ -17,35 +17,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Set up Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
       - name: Unzip project
         run: |
           rm -rf src
           mkdir -p src
           unzip -q messi-android-studio-v2-1.zip -d src
-          find src -maxdepth 3 -type f | head -50
-
-      - name: Make Gradle executable
-        run: |
-          GRADLEW=$(find src -name gradlew -type f | head -1)
-          if [ -n "$GRADLEW" ]; then
-            chmod +x "$GRADLEW"
-          fi
+          echo "Project contents:"
+          find src/messi-android-studio -maxdepth 2 -type f
 
       - name: Build Debug APK
-        run: |
-          GRADLEW=$(find src -name gradlew -type f | head -1)
-          if [ -z "$GRADLEW" ]; then
-            echo "gradlew was not found"
-            exit 1
-          fi
-          PROJECT_DIR=$(dirname "$GRADLEW")
-          cd "$PROJECT_DIR"
-          ./gradlew assembleDebug --stacktrace
+        working-directory: src/messi-android-studio
+        run: gradle :app:assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Messi-10-APK
-          path: |
-            src/**/build/outputs/apk/debug/*.apk
+          path: src/messi-android-studio/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
